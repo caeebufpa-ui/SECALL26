@@ -11,17 +11,11 @@
     
     <style>
         :root {
-            /* Fundo radial simulando tela CRT */
             --bg-arcade: radial-gradient(circle, #2c1a4d 0%, #110a1f 100%);
-            
-            /* Cores exatas do botão START de referência */
             --gabinete-borda-preta: #000000;
-            --gabinete-corpo-laranja: #f98b1b;
-            --gabinete-contorno-topo: #e4f91e;
-            --gabinete-contorno-fundo: #f91ebd;
-            
+            --gabinete-corpo-laranja: #800000; /* Ajustado para o tom mais escuro da sua print */
+            --gabinete-contorno-topo: #88aa00; /* Ajustado para o tom esverdeado da sua print */
             --text-pixel-white: #fff;
-            --text-pixel-black: #000;
             --text-highlight-yellow: #ff0;
             --error-pixel: #ff4444;
             --success-pixel: #00ff00;
@@ -32,9 +26,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Press Start 2P', cursive;
-            /* Força renderização pixelada para imagens, fontes e formas */
             image-rendering: pixelated; 
-            image-rendering: crisp-edges;
         }
 
         body {
@@ -45,201 +37,137 @@
             align-items: center;
             justify-content: center;
             color: var(--text-pixel-white);
-            overflow: hidden; 
-            padding: 20px;
+            padding: 15px;
         }
 
-        /* Área do Logo PNG da pasta assets */
         #logo-container {
             width: 100%;
-            max-width: 350px;
-            margin-bottom: 30px;
+            max-width: 320px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
         #logo-img {
             max-width: 100%;
             height: auto;
-            /* Efeito de brilho na logo */
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); 
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)); 
         }
 
-        /* O GABINETE PRINCIPAL (Contêiner externo) */
         .arcade-card {
             width: 100%;
-            max-width: 450px;
+            max-width: 400px;
             display: flex;
             justify-content: center;
-            position: relative;
         }
 
-        /* A DIV MAIN - REDESENHADA PARA SER IDENTICA AO BOTÃO START */
         .arcade-card-inner {
             background-color: var(--gabinete-corpo-laranja);
             border: 4px solid var(--gabinete-borda-preta);
-            /* Arredondamento pixelado, ajustado para responsividade */
-            border-radius: 25px; 
-            
-            /* Múltiplas sombras internas e externas para simular a forma e os contornos exatos da referência */
+            border-radius: 20px; 
             box-shadow: 
-                /* Contorno Topo Amarelo Vibrante */
-                inset 0 8px 0 var(--gabinete-contorno-topo), 
-                /* Contorno Fundo Rosa Vibrante */
-                inset 0 -8px 0 var(--gabinete-contorno-fundo),
-                /* Sombra Externa Pixelada para profundidade tridimensional */
-                8px 8px 0 rgba(0,0,0,0.5); 
-                
+                inset 0 6px 0 var(--gabinete-contorno-topo), 
+                inset 0 -6px 0 rgba(0,0,0,0.3),
+                6px 6px 0 rgba(0,0,0,0.5); 
             width: 100%;
-            padding: 30px;
+            padding: 25px 15px;
             text-align: center;
-            position: relative;
-            transform: translate(0, 0);
-            transition: transform 0.1s;
         }
 
-        /* Título do Desafio - Centralizado dentro do botão */
         .arcade-card h2 {
-            font-size: 16px;
-            margin-bottom: 25px;
-            color: var(--text-pixel-black);
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: var(--text-pixel-white);
+            text-shadow: 2px 2px 0px #000;
         }
 
-        /* Labels pretos para contraste dentro da forma laranja */
         .arcade-card label {
             display: block;
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
-            margin-bottom: 10px;
-            text-align: center;
-            color: var(--text-pixel-black);
-            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-pixel-white);
         }
 
-        /* Inputs Pixelados - Mais simples e centralizados */
         .arcade-input {
-            width: 90%;
-            background: #fff;
-            border: 4px solid var(--gabinete-borda-preta);
-            color: var(--text-pixel-black);
-            padding: 15px;
+            width: 95%;
+            background: #222;
+            border: 3px solid #777;
+            color: var(--text-pixel-white);
+            padding: 12px;
             font-size: 10px;
-            margin-bottom: 20px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 15px;
             outline: none;
             text-align: center;
         }
 
         .arcade-input:focus {
-            border-color: #0000ff; /* Azul clássico no foco */
-        }
-
-        /* Botão de Validar - Centralizado, estilo Retro com Animação */
-        .arcade-btn-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
+            border-color: #0000ff;
         }
 
         .arcade-btn {
-            background-color: #0000ff; /* Azul clássico */
-            border: 4px solid #fff;
+            background-color: #0000ff;
+            border: 3px solid #fff;
             color: #fff;
-            padding: 15px 30px;
-            font-size: 12px;
+            padding: 12px 20px;
+            font-size: 10px;
             cursor: pointer;
             text-transform: uppercase;
-            transition: background-color 0.2s;
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.4);
-            animation: piscar 2s infinite; /* Efeito Piscar "Insert Coin" */
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.6);
+            animation: piscar 2s infinite;
+            width: 90%;
+            margin-top: 10px;
         }
 
         @keyframes piscar {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; background-color: #1e90ff; }
-        }
-
-        .arcade-btn:hover {
-            background-color: #1e90ff;
-            animation: none; /* Para de piscar ao passar o mouse */
+            50% { opacity: 0.8; background-color: #1e90ff; }
         }
 
         .arcade-btn:active {
-            transform: translate(4px, 4px);
-            box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.6);
         }
 
-        .arcade-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            animation: none;
-        }
-
-        /* Área de Feedback (Sucesso/Erro) - Centralizada */
         #feedback-area {
-            margin-top: 25px;
+            margin-top: 15px;
             width: 100%;
             display: none;
-            justify-content: center;
         }
 
         .feedback-inner {
-            padding: 15px;
-            border: 4px solid transparent;
-            font-size: 8px;
-            line-height: 1.6;
+            padding: 12px;
+            font-size: 9px;
+            line-height: 1.4;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            border: 3px solid transparent;
         }
 
         .feedback-error {
-            background-color: #400;
+            background-color: #500;
             border-color: var(--error-pixel);
             color: var(--error-pixel);
-            display: flex !important;
-            animation: tremerDramatico 0.5s;
-        }
-
-        /* Animação de Tremer mais visível e dramática */
-        @keyframes tremerDramatico {
-            0% { transform: translateX(0); }
-            10% { transform: translateX(-10px); }
-            20% { transform: translateX(10px); }
-            30% { transform: translateX(-10px); }
-            40% { transform: translateX(10px); }
-            50% { transform: translateX(-10px); }
-            60% { transform: translateX(10px); }
-            70% { transform: translateX(-10px); }
-            80% { transform: translateX(10px); }
-            90% { transform: translateX(-10px); }
-            100% { transform: translateX(0); }
         }
 
         .feedback-success {
             background-color: #040;
             border-color: var(--success-pixel);
             color: var(--success-pixel);
-            display: flex !important;
-            animation: cair 0.4s ease-out;
         }
 
-        @keyframes cair {
-            0% { transform: translateY(-30px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        /* O Gifu do Foguinho - Canto inferior direito */
         #fire-gif {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 70px; 
-            height: auto;
+            width: 60px; 
             z-index: 100;
             pointer-events: none; 
+        }
+
+        /* MAGIA AQUI: Esconde o foguinho em celulares para não atrapalhar o clique */
+        @media (max-width: 600px) {
+            #fire-gif {
+                display: none !important;
+            }
         }
 
         .hidden { display: none; }
@@ -255,37 +183,32 @@
         <div class="arcade-card-inner">
             <h2 id="dia-titulo">DESAFIO DIA 1</h2>
             
-            <label>Entre com o seu email</label>
+            <label>ENTRE COM O SEU EMAIL</label>
             <input type="email" id="email" class="arcade-input" placeholder="aluno@ufpa.br">
 
             <div id="password-container" class="hidden">
-                <label>Senhas Anteriores</label>
-                <input type="text" id="senhas" class="arcade-input" placeholder="Digite sem espaços">
+                <label>SENHAS ANTERIORES</label>
+                <input type="text" id="senhas" class="arcade-input" placeholder="DIGITE SEM ESPACOS">
             </div>
 
-            <div class="arcade-btn-container">
-                <button onclick="handleSubmit()" id="btn-submit" class="arcade-btn">
-                    [ VALIDAR ]
-                </button>
-            </div>
+            <button type="button" onclick="handleSubmit()" id="btn-submit" class="arcade-btn">
+                [ VALIDAR ]
+            </button>
 
-            <div id="feedback-area">
-                <div id="feedback-content" class="feedback-inner"></div>
-            </div>
+            <div id="feedback-area"></div>
         </div>
     </div>
 
-    <img src="./assets/foguinho.gif" id="fire-gif" alt="Fogo">
+    <img src="https://media.tenor.com/ygbw_OpxS_0AAAAi/fire-joypixels.gif" id="fire-gif" alt="Fogo">
 
     <script>
-        // COLOQUE AQUI A URL DO SEU GOOGLE APPS SCRIPT
+        // NÃO ESQUEÇA DE COLAR SUA URL DO WEB APP AQUI EMBAIXO:
         const API_URL = "https://script.google.com/macros/s/AKfycbznoIaESXG3b0lCfyw06Bpx0Y6sjsmo47jfCnV_gx3HQGvNVFERfoTZ6Rg73nErFbFdRg/exec"; 
         
         const urlParams = new URLSearchParams(window.location.search);
         const q = urlParams.get('q');
         const d = urlParams.get('d') || 1;
 
-        // Ajusta a interface dependendo do dia
         document.getElementById('dia-titulo').innerText = `DESAFIO DIA ${d}`;
         if (d >= 3) document.getElementById('password-container').classList.remove('hidden');
 
@@ -293,21 +216,16 @@
             const email = document.getElementById('email').value.trim();
             const senhas = document.getElementById('senhas').value.trim();
             const btn = document.getElementById('btn-submit');
-            const feedbackArea = document.getElementById('feedback-area');
-            const feedbackContent = document.getElementById('feedback-content');
-            const arcadeCardInner = document.querySelector('.arcade-card-inner');
 
+            // Feedback imediato se faltar URL ou E-mail
             if (!email || !q) {
-                showFeedback("ERRO: E-MAIL OU QR CODE AUSENTE!", "feedback-error");
+                showFeedback("ERRO: E-MAIL OU PARAMETRO DA URL AUSENTE! (Você escaneou o QR Code?)", "feedback-error");
                 return;
             }
 
-            // Estado de carregamento
             btn.disabled = true;
             btn.innerText = "PROCESSANDO...";
-            feedbackContent.className = "feedback-inner"; // Reset classes
-            feedbackContent.innerHTML = "";
-            feedbackArea.style.display = 'none'; // Esconde a área de feedback
+            document.getElementById('feedback-area').style.display = 'none';
 
             try {
                 const response = await fetch(API_URL, {
@@ -315,42 +233,39 @@
                     body: JSON.stringify({ email, hash: q, senhas, diaAtual: d })
                 });
                 
-                // Melhoria de segurança no front-end: garantindo que o retorno é um JSON válido
                 const textResult = await response.text();
                 let result;
                 try {
                     result = JSON.parse(textResult);
                 } catch (parseError) {
-                    throw new Error("Erro de CORS ou Script redirecionou a requisição.");
+                    throw new Error("Erro no servidor (verifique o Web App URL)");
                 }
 
                 if (result.type === "DANGER") {
                     showFeedback(result.message, "feedback-error");
-                    btn.remove(); // Game Over = Remove o botão
+                    btn.style.display = 'none'; // Some com o botão no game over
                 } else if (result.success) {
                     showFeedback(result.message, "feedback-success");
                     btn.innerText = "SUCESSO!";
                     btn.style.backgroundColor = "var(--success-pixel)";
-                    btn.style.animation = "none"; // Para de piscar
+                    btn.style.animation = "none";
                 } else {
                     showFeedback(result.message, "feedback-error");
                     btn.innerText = "[ TENTAR NOVAMENTE ]";
                     btn.disabled = false;
                 }
             } catch (err) {
-                showFeedback("ERRO DE COMUNICACAO COM O SERVIDOR!", "feedback-error");
+                showFeedback("ERRO DE CONEXAO COM O GOOGLE SCRIPT!", "feedback-error");
                 btn.disabled = false;
                 btn.innerText = "[ VALIDAR ]";
-                console.error(err);
             }
         }
 
+        // Função de feedback simplificada e robusta
         function showFeedback(text, className) {
             const feedbackArea = document.getElementById('feedback-area');
-            const feedbackContent = document.getElementById('feedback-content');
-            feedbackArea.style.display = 'flex'; // Mostra a área de feedback
-            feedbackContent.innerText = text;
-            feedbackContent.className = `feedback-inner ${className}`;
+            feedbackArea.style.display = 'block';
+            feedbackArea.innerHTML = `<div class="feedback-inner ${className}">${text}</div>`;
         }
     </script>
 </body>
