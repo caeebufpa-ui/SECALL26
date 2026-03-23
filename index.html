@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunt QR - Universitário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: all 0.3s ease; }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .loading-spinner {
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-black text-gray-900 dark:text-gray-100 min-h-screen flex items-center justify-center p-6">
+
+    <div id="main-card" class="glass w-full max-w-md p-8 rounded-3xl shadow-2xl transform transition-all duration-500 scale-100 opacity-100">
+        <div class="text-center mb-8">
+            <h1 id="dia-titulo" class="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Caça ao QR Code</h1>
+            <p id="sub-titulo" class="text-2xl font-extrabold">Validação de Acesso</p>
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <label class="block text-xs font-semibold mb-2 uppercase opacity-60">E-mail Institucional</label>
+                <input type="email" id="email" 
+                    class="w-full bg-white/50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-xl p-4 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="ex: joao.moraes@ufpa.br">
+            </div>
+
+            <div id="password-container" class="hidden animate-fade-in">
+                <label class="block text-xs font-semibold mb-2 uppercase opacity-60">Senhas Combinadas</label>
+                <input type="text" id="senhas" 
+                    class="w-full bg-white/50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-xl p-4 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                    placeholder="Digite as senhas sem espaços">
+            </div>
+
+            <button onclick="handleSubmit()" id="btn-submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30 transform active:scale-95 transition-all flex justify-center items-center">
+                <span>Validar Desafio</span>
+            </button>
+        </div>
+
+        <div id="feedback" class="mt-8 hidden p-4 rounded-2xl text-center font-medium"></div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbx4NQ1CXep4vp1A1V4oSoEMH0uI5nJo1UwQ1zD8lhi1eYKj1sWoYHYe3yVJquyCUydM/exec";
+        const urlParams = new URLSearchParams(window.location.search);
+        const q = urlParams.get('q');
+        const d = urlParams.get('d') || 1;
+
+        // Configuração Inicial da UI
+        document.getElementById('dia-titulo').innerText = `Desafio Dia ${d}`;
+        if (d >= 3) document.getElementById('password-container').classList.remove('hidden');
+
+        async function handleSubmit() {
+            const email = document.getElementById('email').value;
+            const senhas = document.getElementById('senhas').value;
+            const btn = document.getElementById('btn-submit');
+            const feedback = document.getElementById('feedback');
+            const card = document.getElementById('main-card');
+
+            if (!email || !q) {
+                showFeedback("E-mail ou QR Code ausente!", "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200");
+                return;
+            }
+
+            // UI Loading
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading-spinner w-5 h-5"></div>';
+            feedback.classList.add('hidden');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ email, hash: q, senhas, diaAtual: d })
+                });
+                const result = await response.json();
+
+                if (result.type === "DANGER") {
+                    card.classList.add('border-red-500', 'ring-4', 'ring-red-500/20');
+                    showFeedback(result.message, "bg-red-500 text-white");
+                    btn.remove();
+                } else if (result.success) {
+                    showFeedback(result.message, "bg-green-500 text-white");
+                    btn.classList.replace('bg-blue-600', 'bg-green-600');
+                    btn.innerHTML = 'Sucesso!';
+                } else {
+                    showFeedback(result.message, "bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200");
+                    btn.innerHTML = 'Validar Desafio';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                showFeedback("Erro na conexão. Tente novamente.", "bg-red-100 text-red-800");
+                btn.disabled = false;
+                btn.innerHTML = 'Validar Desafio';
+            }
+        }
+
+        function showFeedback(text, classes) {
+            const f = document.getElementById('feedback');
+            f.innerText = text;
+            f.className = `mt-8 p-4 rounded-2xl text-center font-bold animate-bounce ${classes}`;
+            f.classList.remove('hidden');
+        }
+
+        // Auto Dark Mode
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</body>
+</html>
