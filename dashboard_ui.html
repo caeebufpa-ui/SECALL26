@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .status-dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; }
+    .bg-ok { background-color: #22c55e; }
+    .bg-wait { background-color: #94a3b8; }
+    .bg-trap { background-color: #ef4444; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white p-4 font-sans">
+  <div class="max-w-6xl mx-auto">
+    <header class="flex justify-between items-center mb-8 border-b border-gray-700 pb-4">
+      <h1 class="text-2xl font-bold text-blue-400">Live Dashboard: Caça ao QR Code</h1>
+      <div id="stats" class="text-sm bg-gray-800 p-2 rounded">Carregando estatísticas...</div>
+    </header>
+
+    <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-xl">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-700 text-gray-300 text-xs uppercase">
+            <th class="p-4">Participante</th>
+            <th class="p-4">Status</th>
+            <th class="p-4">Dia 1</th>
+            <th class="p-4">Dia 2</th>
+            <th class="p-4">Dia 3</th>
+            <th class="p-4">Dia 4</th>
+            <th class="p-4">Equipe</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-corpo" class="text-sm">
+          </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function carregarDados() {
+      google.script.run.withSuccessHandler(renderizar).getLiveStatus();
+    }
+
+    function renderizar(participantes) {
+      const corpo = document.getElementById('tabela-corpo');
+      corpo.innerHTML = "";
+      let ativos = 0;
+
+      participantes.forEach(p => {
+        if(p.status === "Ativo") ativos++;
+        
+        const row = document.createElement('tr');
+        row.className = "border-b border-gray-700 hover:bg-gray-750 transition";
+        if(p.desclassificado) row.className += " opacity-50 bg-red-900/10";
+
+        row.innerHTML = `
+          <td class="p-4 font-medium">${p.email}<br><span class="text-xs text-gray-500">${p.nome || ''}</span></td>
+          <td class="p-4">
+            <span class="px-2 py-1 rounded-full text-xs ${p.desclassificado ? 'bg-red-500' : (p.status === 'Ativo' ? 'bg-green-600' : 'bg-gray-600')}">
+              ${p.desclassificado ? 'ELIMINADO' : p.status}
+            </span>
+          </td>
+          ${p.progresso.map(dia => `
+            <td class="p-4 text-center">
+              <span class="status-dot ${dia === 'OK' || dia === 'Concluído' ? 'bg-ok' : 'bg-wait'}"></span>
+            </td>
+          `).join('')}
+          <td class="p-4 text-blue-400 font-bold">${p.equipe || '-'}</td>
+        `;
+        corpo.appendChild(row);
+      });
+
+      document.getElementById('stats').innerText = `Ativos: ${ativos}/45 | Total: ${participantes.length}`;
+    }
+
+    // Atualiza a cada 30 segundos
+    carregarDados();
+    setInterval(carregarDados, 30000);
+  </script>
+</body>
+</html>
