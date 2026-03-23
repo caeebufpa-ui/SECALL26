@@ -11,11 +11,18 @@
     
     <style>
         :root {
+            /* Fundo radial simulando tela CRT */
             --bg-arcade: radial-gradient(circle, #2c1a4d 0%, #110a1f 100%);
-            --gabinete-borda: #ffd700;
-            --gabinete-fundo: #ff4500;
-            --text-pixel: #fff;
-            --text-highlight: #ff0;
+            
+            /* Cores exatas do botão START de referência */
+            --gabinete-borda-preta: #000000;
+            --gabinete-corpo-laranja: #f98b1b;
+            --gabinete-contorno-topo: #e4f91e;
+            --gabinete-contorno-fundo: #f91ebd;
+            
+            --text-pixel-white: #fff;
+            --text-pixel-black: #000;
+            --text-highlight-yellow: #ff0;
             --error-pixel: #ff4444;
             --success-pixel: #00ff00;
         }
@@ -25,7 +32,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Press Start 2P', cursive;
-            /* Força renderização pixelada para imagens e fontes */
+            /* Força renderização pixelada para imagens, fontes e formas */
             image-rendering: pixelated; 
             image-rendering: crisp-edges;
         }
@@ -37,7 +44,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--text-pixel);
+            color: var(--text-pixel-white);
             overflow: hidden; 
             padding: 20px;
         }
@@ -57,65 +64,95 @@
             filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); 
         }
 
-        /* A DIV MAIN - Gabinete/Botão Start */
+        /* O GABINETE PRINCIPAL (Contêiner externo) */
         .arcade-card {
-            background-color: var(--gabinete-fundo);
-            border: 8px solid var(--gabinete-borda);
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.5), inset 4px 4px 0px rgba(255,255,255,0.3);
             width: 100%;
             max-width: 450px;
-            padding: 30px;
-            text-align: center;
+            display: flex;
+            justify-content: center;
             position: relative;
         }
 
+        /* A DIV MAIN - REDESENHADA PARA SER IDENTICA AO BOTÃO START */
+        .arcade-card-inner {
+            background-color: var(--gabinete-corpo-laranja);
+            border: 4px solid var(--gabinete-borda-preta);
+            /* Arredondamento pixelado, ajustado para responsividade */
+            border-radius: 25px; 
+            
+            /* Múltiplas sombras internas e externas para simular a forma e os contornos exatos da referência */
+            box-shadow: 
+                /* Contorno Topo Amarelo Vibrante */
+                inset 0 8px 0 var(--gabinete-contorno-topo), 
+                /* Contorno Fundo Rosa Vibrante */
+                inset 0 -8px 0 var(--gabinete-contorno-fundo),
+                /* Sombra Externa Pixelada para profundidade tridimensional */
+                8px 8px 0 rgba(0,0,0,0.5); 
+                
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transform: translate(0, 0);
+            transition: transform 0.1s;
+        }
+
+        /* Título do Desafio - Centralizado dentro do botão */
         .arcade-card h2 {
             font-size: 16px;
             margin-bottom: 25px;
-            color: #fff;
-            text-shadow: 3px 3px 0px #000;
+            color: var(--text-pixel-black);
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
         }
 
+        /* Labels pretos para contraste dentro da forma laranja */
         .arcade-card label {
             display: block;
             font-size: 10px;
             text-transform: uppercase;
             margin-bottom: 10px;
-            text-align: left;
-            color: rgba(255,255,255,0.9);
-            text-shadow: 1px 1px 0px #000;
+            text-align: center;
+            color: var(--text-pixel-black);
+            font-weight: bold;
         }
 
-        /* Inputs Pixelados */
+        /* Inputs Pixelados - Mais simples e centralizados */
         .arcade-input {
-            width: 100%;
-            background: #000;
-            border: 4px solid #fff;
-            color: var(--text-highlight);
+            width: 90%;
+            background: #fff;
+            border: 4px solid var(--gabinete-borda-preta);
+            color: var(--text-pixel-black);
             padding: 15px;
-            font-size: 12px;
+            font-size: 10px;
             margin-bottom: 20px;
+            margin-left: auto;
+            margin-right: auto;
             outline: none;
-            box-shadow: inset 4px 4px 0px rgba(255,255,255,0.2);
+            text-align: center;
         }
 
         .arcade-input:focus {
-            border-color: var(--text-highlight);
+            border-color: #0000ff; /* Azul clássico no foco */
         }
 
-        /* Botão de Validar - Estilo Retro com Animação */
-        .arcade-btn {
+        /* Botão de Validar - Centralizado, estilo Retro com Animação */
+        .arcade-btn-container {
             width: 100%;
-            background-color: #0000ff; 
+            display: flex;
+            justify-content: center;
+        }
+
+        .arcade-btn {
+            background-color: #0000ff; /* Azul clássico */
             border: 4px solid #fff;
             color: #fff;
-            padding: 15px;
+            padding: 15px 30px;
             font-size: 12px;
             cursor: pointer;
             text-transform: uppercase;
             transition: background-color 0.2s;
             box-shadow: 6px 6px 0px rgba(0,0,0,0.4);
-            animation: piscar 2s infinite; /* Efeito Insert Coin */
+            animation: piscar 2s infinite; /* Efeito Piscar "Insert Coin" */
         }
 
         @keyframes piscar {
@@ -139,30 +176,45 @@
             animation: none;
         }
 
-        /* Área de Feedback (Sucesso/Erro) */
+        /* Área de Feedback (Sucesso/Erro) - Centralizada */
         #feedback-area {
             margin-top: 25px;
+            width: 100%;
+            display: none;
+            justify-content: center;
+        }
+
+        .feedback-inner {
             padding: 15px;
             border: 4px solid transparent;
-            font-size: 10px;
+            font-size: 8px;
             line-height: 1.6;
-            display: none;
-            text-shadow: 1px 1px 0px #000;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .feedback-error {
             background-color: #400;
             border-color: var(--error-pixel);
             color: var(--error-pixel);
-            display: block !important;
-            animation: tremer 0.3s;
+            display: flex !important;
+            animation: tremerDramatico 0.5s;
         }
 
-        @keyframes tremer {
+        /* Animação de Tremer mais visível e dramática */
+        @keyframes tremerDramatico {
             0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
+            10% { transform: translateX(-10px); }
+            20% { transform: translateX(10px); }
+            30% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            50% { transform: translateX(-10px); }
+            60% { transform: translateX(10px); }
+            70% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+            90% { transform: translateX(-10px); }
             100% { transform: translateX(0); }
         }
 
@@ -170,10 +222,16 @@
             background-color: #040;
             border-color: var(--success-pixel);
             color: var(--success-pixel);
-            display: block !important;
+            display: flex !important;
+            animation: cair 0.4s ease-out;
         }
 
-        /* O Foguinho GIF - Canto inferior direito */
+        @keyframes cair {
+            0% { transform: translateY(-30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* O Gifu do Foguinho - Canto inferior direito */
         #fire-gif {
             position: fixed;
             bottom: 20px;
@@ -194,21 +252,27 @@
     </div>
 
     <div class="arcade-card">
-        <h2 id="dia-titulo">DESAFIO DIA 1</h2>
-        
-        <label>E-mail Institucional</label>
-        <input type="email" id="email" class="arcade-input" placeholder="aluno@ufpa.br">
+        <div class="arcade-card-inner">
+            <h2 id="dia-titulo">DESAFIO DIA 1</h2>
+            
+            <label>E-mail Institucional</label>
+            <input type="email" id="email" class="arcade-input" placeholder="aluno@ufpa.br">
 
-        <div id="password-container" class="hidden">
-            <label>Senhas Anteriores</label>
-            <input type="text" id="senhas" class="arcade-input" placeholder="Digite sem espaços">
+            <div id="password-container" class="hidden">
+                <label>Senhas Anteriores</label>
+                <input type="text" id="senhas" class="arcade-input" placeholder="Digite sem espaços">
+            </div>
+
+            <div class="arcade-btn-container">
+                <button onclick="handleSubmit()" id="btn-submit" class="arcade-btn">
+                    [ VALIDAR ]
+                </button>
+            </div>
+
+            <div id="feedback-area">
+                <div id="feedback-content" class="feedback-inner"></div>
+            </div>
         </div>
-
-        <button onclick="handleSubmit()" id="btn-submit" class="arcade-btn">
-            [ VALIDAR ]
-        </button>
-
-        <div id="feedback-area"></div>
     </div>
 
     <img src="./assets/foguinho.gif" id="fire-gif" alt="Fogo">
@@ -229,7 +293,9 @@
             const email = document.getElementById('email').value.trim();
             const senhas = document.getElementById('senhas').value.trim();
             const btn = document.getElementById('btn-submit');
-            const feedback = document.getElementById('feedback-area');
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackContent = document.getElementById('feedback-content');
+            const arcadeCardInner = document.querySelector('.arcade-card-inner');
 
             if (!email || !q) {
                 showFeedback("ERRO: E-MAIL OU QR CODE AUSENTE!", "feedback-error");
@@ -239,8 +305,9 @@
             // Estado de carregamento
             btn.disabled = true;
             btn.innerText = "PROCESSANDO...";
-            feedback.className = ""; 
-            feedback.innerHTML = "";
+            feedbackContent.className = "feedback-inner"; // Reset classes
+            feedbackContent.innerHTML = "";
+            feedbackArea.style.display = 'none'; // Esconde a área de feedback
 
             try {
                 const response = await fetch(API_URL, {
@@ -279,9 +346,11 @@
         }
 
         function showFeedback(text, className) {
-            const f = document.getElementById('feedback-area');
-            f.innerText = text;
-            f.className = className;
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackContent = document.getElementById('feedback-content');
+            feedbackArea.style.display = 'flex'; // Mostra a área de feedback
+            feedbackContent.innerText = text;
+            feedbackContent.className = `feedback-inner ${className}`;
         }
     </script>
 </body>
